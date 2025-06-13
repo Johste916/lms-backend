@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 module.exports = {
   development: {
     username: 'postgres',
     password: 'Johsta67!',
-    database: 'johsta_db', // local dev DB
+    database: 'johsta_db',
     host: '127.0.0.1',
     port: 5432,
     dialect: 'postgres',
@@ -20,18 +22,19 @@ module.exports = {
   },
 
   production: {
-    username: 'postgres',
+    username: 'postgres.fhphrceciezjvvhbqmgu', // from pooler string
     password: 'Johsta67!',
     database: 'postgres',
-    host: 'db.fhphrceciezjvvhbqmgu.supabase.co',
+    host: 'aws-0-ap-southeast-1.pooler.supabase.com', // IPv4-compatible host
     port: 5432,
     dialect: 'postgres',
+    logging: false,
     dialectOptions: {
       ssl: {
         require: true,
         rejectUnauthorized: false
       }
-    },
-    logging: false
+    }
   }
 };
+
