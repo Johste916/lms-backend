@@ -22,11 +22,7 @@ module.exports = {
   },
 
   production: {
-    username: 'postgres.fhphrceciezjvvhbqmgu',                     // ✅ From Transaction Pooler
-    password: 'Johsta67!',                                         // ✅ Your Supabase DB password
-    database: 'postgres',                                          // ✅ Confirmed from connection string
-    host: 'aws-0-ap-southeast-1.pooler.supabase.com',              // ✅ IPv4-compatible Supabase pooler host
-    port: 5432,
+    use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
     logging: false,
     dialectOptions: {
