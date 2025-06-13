@@ -1,8 +1,8 @@
 module.exports = {
   development: {
-    username: 'postgres',             // your actual PostgreSQL username
-    password: 'Johsta67!',        // your PostgreSQL password
-    database: 'johsta_db',            // ✅ keep this as-is
+    username: 'postgres',
+    password: 'Johsta67!',
+    database: 'johsta_db',
     host: '127.0.0.1',
     port: 5432,
     dialect: 'postgres',
@@ -22,10 +22,16 @@ module.exports = {
   production: {
     username: 'postgres',
     password: 'Johsta67!',
-    database: 'johsta_prod',
-    host: '127.0.0.1',
+    database: 'postgres',
+    host: 'db.fhphrceciezjvvhbqmgu.supabase.co',
     port: 5432,
     dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    },
     logging: false
   }
 };
