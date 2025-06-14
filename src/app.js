@@ -1,48 +1,58 @@
 // backend/src/app.js
-require('dotenv').config();       // 1️⃣ Load .env
-const express       = require('express');
-const cors          = require('cors');
+
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
 const startCronJobs = require('./utils/cronJobs');
 
 const app = express();
 
-// ─── Middleware ─────────────────────────────────────────
-app.use(cors());
+// ─────────────────────────────────────────────────────────────
+// ✅ CORS Configuration (Allow local dev + Render frontend)
+const allowedOrigins = [
+  'http://localhost:5173',                              // Local dev
+  'https://lms-frontend-johsta.onrender.com'            // Your deployed frontend URL
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed from this origin'));
+    }
+  },
+  credentials: true
+}));
+
+// ─────────────────────────────────────────────────────────────
+// Middleware
 app.use(express.json());
 
-// ─── Route Modules ───────────────────────────────────────
-const authRoutes      = require('./routes/authRoutes');
-const userRoutes      = require('./routes/userRoutes');
-const loanRoutes      = require('./routes/loanRoutes');
-const branchRoutes    = require('./routes/branchRoutes');
-const borrowerRoutes  = require('./routes/borrowerRoutes');
-const paymentRoutes   = require('./routes/paymentRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
-const defaulterRoutes = require('./routes/defaulterRoutes');
-const exportRoutes    = require('./routes/exportRoutes');  // ✅ Only here once!
+// ─────────────────────────────────────────────────────────────
+// Routes
+app.use('/api/auth',        require('./routes/authRoutes'));
+app.use('/api/users',       require('./routes/userRoutes'));
+app.use('/api/loans',       require('./routes/loanRoutes'));
+app.use('/api/branches',    require('./routes/branchRoutes'));
+app.use('/api/borrowers',   require('./routes/borrowerRoutes'));
+app.use('/api/payments',    require('./routes/paymentRoutes'));
+app.use('/api/dashboard',   require('./routes/dashboardRoutes'));
+app.use('/api/defaulters',  require('./routes/defaulterRoutes'));
+app.use('/api/export',      require('./routes/exportRoutes'));
 
-// ─── Public / Auth ───────────────────────────────────────
-app.use('/api/auth', authRoutes);
-
-// ─── Protected Resources ─────────────────────────────────
-app.use('/api/users',      userRoutes);
-app.use('/api/loans',      loanRoutes);
-app.use('/api/branches',   branchRoutes);
-app.use('/api/borrowers',  borrowerRoutes);
-app.use('/api/payments',   paymentRoutes);
-app.use('/api/dashboard',  dashboardRoutes);
-app.use('/api/defaulters', defaulterRoutes);
-app.use('/api/export',     exportRoutes);  // ✅ No need for "/export" outside "api"
-
-// ─── Health Check ────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// Health check endpoint
 app.get('/', (req, res) => {
   res.send('🟢 Loan Management API is running');
 });
 
-// ─── Start Cron Jobs ─────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// Start cron jobs
 startCronJobs();
 
-// ─── Launch Server ───────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
